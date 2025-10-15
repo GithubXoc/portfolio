@@ -1,5 +1,5 @@
-import { useState, useEffect, WheelEvent, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, type WheelEvent, useRef } from 'react';
+import { motion } from 'framer-motion';
 import HomeSection from './components/HomeSection';
 import AboutSection from './components/AboutSection';
 import ProjectsSection from './components/ProjectsSection';
