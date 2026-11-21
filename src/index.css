@@ -2,7 +2,9 @@
 
 /* Design tokens — every color/font utility (bg-surface, text-muted, …) comes from here. */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Inter covers Latin + Cyrillic (Mongolian); Japanese falls back to the OS font. */
+  --font-sans: "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo,
+    ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --color-bg: #0a0b10;
@@ -23,6 +25,15 @@
 
   body {
     @apply bg-bg text-fg font-sans antialiased;
+  }
+
+  /* Japanese: strict line-breaking rules everywhere; phrase-aware breaks for short headings only
+     (on long paragraphs it leaves ragged lines and can overflow narrow screens). */
+  html:lang(ja) body {
+    line-break: strict;
+  }
+  html:lang(ja) :is(h1, h2) {
+    word-break: auto-phrase;
   }
 
   ::selection {

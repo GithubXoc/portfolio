@@ -1,12 +1,14 @@
 import { Check, Copy, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { profile } from '../../data/profile';
+import { useLanguage } from '../../i18n/useLanguage';
 import ButtonLink from '../ui/ButtonLink';
 import Reveal from '../ui/Reveal';
 import Section from '../ui/Section';
 import SocialLinks from '../ui/SocialLinks';
 
 export default function Contact() {
+  const { ui } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -26,16 +28,13 @@ export default function Contact() {
           aria-hidden
           className="pointer-events-none absolute -top-32 left-1/2 h-64 w-[600px] max-w-full -translate-x-1/2 rounded-full bg-accent/15 blur-3xl"
         />
-        <p className="relative font-mono text-sm text-accent">04. What's next?</p>
-        <h2 className="relative mt-4 text-4xl font-bold tracking-tight md:text-5xl">Let's work together</h2>
-        <p className="relative mx-auto mt-5 max-w-xl text-lg text-muted">
-          Have a project in mind, a role you think I'd fit, or just want to say hi? My inbox is always
-          open — I'll get back to you as soon as I can.
-        </p>
+        <p className="relative font-mono text-sm text-accent">04. {ui.contact.eyebrow}</p>
+        <h2 className="relative mt-4 text-4xl font-bold tracking-tight md:text-5xl">{ui.contact.title}</h2>
+        <p className="relative mx-auto mt-5 max-w-xl text-lg text-muted">{ui.contact.text}</p>
 
         <div className="relative mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <ButtonLink href={`mailto:${profile.email}`}>
-            <Mail size={16} /> Say hello
+            <Mail size={16} /> {ui.contact.sayHello}
           </ButtonLink>
           <button
             type="button"
@@ -43,7 +42,7 @@ export default function Contact() {
             className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 font-mono text-sm text-muted transition-colors hover:border-accent/60 hover:text-accent"
           >
             {copied ? <Check size={16} className="text-accent" /> : <Copy size={16} />}
-            {copied ? 'Copied!' : profile.email}
+            {copied ? ui.contact.copied : profile.email}
           </button>
         </div>
 

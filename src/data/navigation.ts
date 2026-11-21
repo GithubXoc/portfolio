@@ -1,8 +1,5 @@
-export const navItems = [
-  { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'contact', label: 'Contact' },
-] as const;
+/** Section ids linked from the navbar, in order. Labels live in src/i18n/ui.ts (nav.*). */
+export const navIds = ['about', 'skills', 'projects', 'contact'] as const;
 
-export type SectionId = 'home' | (typeof navItems)[number]['id'];
+export type NavId = (typeof navIds)[number];
+export type SectionId = 'home' | NavId;
