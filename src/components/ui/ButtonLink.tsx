@@ -6,8 +6,8 @@ interface ButtonLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 const variants = {
-  primary: 'bg-accent text-bg hover:bg-accent-strong',
-  secondary: 'border border-border bg-surface/60 text-fg hover:border-accent/60 hover:text-accent',
+  primary: 'border-accent bg-accent text-bg hover:bg-transparent hover:text-accent',
+  secondary: 'border-line/60 text-fg hover:border-accent hover:text-accent',
 };
 
 export default function ButtonLink({
@@ -18,7 +18,7 @@ export default function ButtonLink({
 }: ButtonLinkProps) {
   return (
     <a
-      className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 border px-5 py-3 font-mono text-xs font-medium tracking-[0.15em] uppercase transition-colors ${variants[variant]} ${className}`}
       {...props}
     >
       {children}

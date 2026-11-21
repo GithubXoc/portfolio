@@ -14,9 +14,9 @@ export default function SocialLinks({ className = '' }: SocialLinksProps) {
             aria-label={label}
             title={label}
             {...(href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-            className="grid size-10 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-accent"
+            className="grid size-10 place-items-center border border-line/40 text-muted transition-colors hover:border-accent hover:text-accent"
           >
-            <Icon size={20} />
+            <Icon size={18} strokeWidth={1.5} />
           </a>
         </li>
       ))}
