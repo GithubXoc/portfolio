@@ -35,5 +35,20 @@ src/
 ## Customizing
 
 - **Content** — edit the files in `src/data/`. Sections render whatever is there; project links are only shown when `github` / `demo` are set, and an `image` replaces the default icon cover.
-- **Colors & fonts** — change the tokens in the `@theme` block in `src/index.css`. Utilities such as `bg-surface`, `text-muted` and `text-accent` are generated from them.
+- **Colors & fonts** — change the tokens in the `@theme` block in `src/index.css`. Utilities such as `bg-panel`, `border-line/40`, `text-muted` and `text-accent` are generated from them.
 - **Add a section** — create a component in `components/sections/` wrapped in `<Section id="..." />`, add it to `App.tsx`, and add its id to `data/navigation.ts`.
+
+## Deploying to GitHub Pages
+
+Deployment is automated by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): every push to `main` builds the site and publishes it to **https://githubxoc.github.io/portfolio/**. It can also be run manually from the repository's **Actions** tab ("Deploy to GitHub Pages" → "Run workflow").
+
+One-time setup: in the repository on GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+
+GitHub Pages serves project sites from `/<repo-name>/`, so the workflow builds with `BASE_PATH=/<repo-name>/`. Locally and on hosts that serve from the domain root, `BASE_PATH` is unset and the base stays `/`. To test the Pages build locally:
+
+```bash
+BASE_PATH=/portfolio/ pnpm build
+BASE_PATH=/portfolio/ pnpm preview   # open http://localhost:4173/portfolio/
+```
+
+If you rename the repository the URL changes with it automatically; for a user site (`<user>.github.io` repo) or a custom domain, set `BASE_PATH: /` in the workflow.
