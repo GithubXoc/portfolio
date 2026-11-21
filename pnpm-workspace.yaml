@@ -1,0 +1,4 @@
+# Dependencies allowed to run install scripts (pnpm blocks all others, and fails in CI if any are undecided).
+allowBuilds:
+  '@tailwindcss/oxide': true # Tailwind's native engine — installs the platform binary
+  esbuild: true # Vite's bundler — verifies the platform binary
