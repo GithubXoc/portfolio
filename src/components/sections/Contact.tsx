@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { profile } from '../../data/profile';
 import { useLanguage } from '../../i18n/useLanguage';
 import ButtonLink from '../ui/ButtonLink';
+import Corners from '../ui/Corners';
 import Reveal from '../ui/Reveal';
 import Section from '../ui/Section';
 import SocialLinks from '../ui/SocialLinks';
 
 export default function Contact() {
-  const { ui } = useLanguage();
+  const { t, ui } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -22,31 +23,49 @@ export default function Contact() {
   };
 
   return (
-    <Section id="contact">
-      <Reveal className="relative overflow-hidden rounded-3xl border border-border bg-surface/70 px-6 py-16 text-center sm:px-12 md:py-20">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-32 left-1/2 h-64 w-[600px] max-w-full -translate-x-1/2 rounded-full bg-accent/15 blur-3xl"
-        />
-        <p className="relative font-mono text-sm text-accent">04. {ui.contact.eyebrow}</p>
-        <h2 className="relative mt-4 text-4xl font-bold tracking-tight md:text-5xl">{ui.contact.title}</h2>
-        <p className="relative mx-auto mt-5 max-w-xl text-lg text-muted">{ui.contact.text}</p>
+    <Section id="contact" index="04" title={ui.contact.title}>
+      <Reveal className="relative">
+        <Corners />
+        <div className="grid gap-10 border border-line/50 bg-panel/70 p-6 sm:p-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+          <div>
+            <p className="max-w-xl text-lg leading-relaxed text-fg/85">{ui.contact.text}</p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <ButtonLink href={`mailto:${profile.email}`}>
+                <Mail size={14} /> {ui.contact.sayHello}
+              </ButtonLink>
+              <SocialLinks />
+            </div>
+          </div>
 
-        <div className="relative mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <ButtonLink href={`mailto:${profile.email}`}>
-            <Mail size={16} /> {ui.contact.sayHello}
-          </ButtonLink>
-          <button
-            type="button"
-            onClick={copyEmail}
-            className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 font-mono text-sm text-muted transition-colors hover:border-accent/60 hover:text-accent"
-          >
-            {copied ? <Check size={16} className="text-accent" /> : <Copy size={16} />}
-            {copied ? ui.contact.copied : profile.email}
-          </button>
+          <div className="space-y-6">
+            {/* E-mail field, like a filled-in form box */}
+            <div className="border border-line/60">
+              <div className="annot border-b border-line/60 px-4 py-1.5 text-[10px]">{ui.contact.emailLabel}</div>
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="min-w-0 truncate font-mono text-sm text-fg hover:text-accent sm:text-base"
+                >
+                  {profile.email}
+                </a>
+                <button
+                  type="button"
+                  onClick={copyEmail}
+                  className="flex shrink-0 items-center gap-1.5 border border-line/50 px-2.5 py-1.5 font-mono text-[11px] tracking-wider text-muted uppercase transition-colors hover:border-accent hover:text-accent"
+                >
+                  {copied ? <Check size={13} className="text-accent" /> : <Copy size={13} />}
+                  {copied ? ui.contact.copied : ui.contact.copy}
+                </button>
+              </div>
+            </div>
+
+            {profile.availability && (
+              <div className="text-right">
+                <span className="stamp inline-block -rotate-6">{t(profile.availability)}</span>
+              </div>
+            )}
+          </div>
         </div>
-
-        <SocialLinks className="relative mt-8 justify-center" />
       </Reveal>
     </Section>
   );

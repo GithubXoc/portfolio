@@ -12,15 +12,7 @@ const sectionIds = ['home', ...navIds];
 export default function Navbar() {
   const { ui } = useLanguage();
   const active = useActiveSection(sectionIds);
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // Close the mobile menu with Escape.
   useEffect(() => {
@@ -30,40 +22,31 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const elevated = scrolled || open;
-
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        elevated ? 'border-b border-border/70 bg-bg/80 backdrop-blur-lg' : 'border-b border-transparent'
-      }`}
-    >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-        <a href="#home" className="font-mono text-lg font-semibold tracking-tight" onClick={() => setOpen(false)}>
-          {profile.nickname.toLowerCase()}
-          <span className="text-accent">.dev</span>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-line/40 bg-bg/85 backdrop-blur-md xl:inset-x-5 xl:top-5">
+      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
+        <a href="#home" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+          <span className="grid size-8 place-items-center border border-line/70 font-display text-lg font-bold">
+            {profile.nickname[0]}
+          </span>
+          <span className="annot hidden text-fg sm:inline">{profile.nickname.toLowerCase()}.dev</span>
         </a>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-6">
           {/* Desktop links */}
-          <ul className="hidden items-center gap-1 md:flex">
-            {navIds.map((id) => (
+          <ul className="hidden items-center gap-5 md:flex">
+            {navIds.map((id, i) => (
               <li key={id}>
                 <a
                   href={`#${id}`}
                   aria-current={active === id ? 'page' : undefined}
-                  className={`relative rounded-md px-3 py-2 text-sm whitespace-nowrap transition-colors ${
-                    active === id ? 'text-fg' : 'text-muted hover:text-fg'
+                  className={`group flex items-center gap-2 font-mono text-xs tracking-wider whitespace-nowrap uppercase transition-colors ${
+                    active === id ? 'text-accent' : 'text-muted hover:text-fg'
                   }`}
                 >
+                  <span className={`size-1.5 ${active === id ? 'bg-accent' : 'border border-current'}`} />
+                  <span className="opacity-60">0{i + 1}</span>
                   {ui.nav[id]}
-                  {active === id && (
-                    <motion.span
-                      layoutId="nav-underline"
-                      className="absolute inset-x-3 -bottom-0.5 h-px bg-accent"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
                 </a>
               </li>
             ))}
@@ -74,13 +57,13 @@ export default function Navbar() {
           {/* Mobile toggle */}
           <button
             type="button"
-            className="grid size-10 place-items-center rounded-lg text-muted hover:text-fg md:hidden"
+            className="grid size-9 place-items-center border border-line/50 text-muted hover:text-fg md:hidden"
             aria-label={open ? ui.nav.closeMenu : ui.nav.openMenu}
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            {open ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </nav>
@@ -90,20 +73,22 @@ export default function Navbar() {
         {open && (
           <motion.ul
             id="mobile-menu"
-            className="overflow-hidden border-t border-border/70 px-5 md:hidden"
+            className="overflow-hidden border-t border-line/40 px-5 md:hidden"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
             {navIds.map((id, i) => (
-              <li key={id} className={i === 0 ? 'pt-2' : i === navIds.length - 1 ? 'pb-4' : ''}>
+              <li key={id} className="border-b border-line/20 last:border-b-0">
                 <a
                   href={`#${id}`}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 py-3 text-base ${active === id ? 'text-accent' : 'text-muted'}`}
+                  className={`flex items-center gap-4 py-4 font-mono text-sm tracking-wider uppercase ${
+                    active === id ? 'text-accent' : 'text-fg'
+                  }`}
                 >
-                  <span className="font-mono text-xs text-accent/70">0{i + 1}.</span>
+                  <span className="text-xs text-muted">0{i + 1}</span>
                   {ui.nav[id]}
                 </a>
               </li>

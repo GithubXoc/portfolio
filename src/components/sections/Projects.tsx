@@ -1,13 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Briefcase, Github, User } from 'lucide-react';
+import { ArrowUpRight, Github } from 'lucide-react';
 import { useState } from 'react';
 import { projectCategories, projects, type Project, type ProjectCategory } from '../../data/projects';
 import { useLanguage } from '../../i18n/useLanguage';
+import Corners from '../ui/Corners';
 import Reveal from '../ui/Reveal';
 import Section from '../ui/Section';
 import Tag from '../ui/Tag';
 
-const categoryIcons = { work: Briefcase, personal: User } as const;
+const codePrefix: Record<ProjectCategory, string> = { work: 'W', personal: 'P' };
 
 export default function Projects() {
   const { t, ui } = useLanguage();
@@ -18,13 +19,8 @@ export default function Projects() {
   return (
     <Section id="projects" index="03" title={ui.projects.title} subtitle={ui.projects.subtitle}>
       <Reveal className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div
-          role="tablist"
-          aria-label={ui.projects.typeLabel}
-          className="inline-flex w-full rounded-xl border border-border bg-surface/70 p-1 sm:w-auto"
-        >
+        <div role="tablist" aria-label={ui.projects.typeLabel} className="flex border border-line/50">
           {projectCategories.map(({ id, label }) => {
-            const Icon = categoryIcons[id];
             const count = projects.filter((p) => p.category === id).length;
             const selected = active === id;
             return (
@@ -36,26 +32,13 @@ export default function Projects() {
                 aria-selected={selected}
                 aria-controls="projects-panel"
                 onClick={() => setActive(id)}
-                className={`relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors sm:flex-none ${
-                  selected ? 'text-bg' : 'text-muted hover:text-fg'
+                className={`flex flex-1 items-center justify-center gap-3 border-r border-line/50 px-5 py-2.5 font-mono text-xs tracking-wider uppercase transition-colors last:border-r-0 sm:flex-none ${
+                  selected ? 'bg-accent text-bg' : 'text-muted hover:bg-line/10 hover:text-fg'
                 }`}
               >
-                {selected && (
-                  <motion.span
-                    layoutId="project-tab"
-                    className="absolute inset-0 rounded-lg bg-accent"
-                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                  />
-                )}
-                <Icon size={16} className="relative" />
-                <span className="relative">{t(label)}</span>
-                <span
-                  className={`relative rounded-md px-1.5 font-mono text-xs ${
-                    selected ? 'bg-bg/15' : 'bg-surface-2'
-                  }`}
-                >
-                  {count}
-                </span>
+                <span className="opacity-70">{codePrefix[id]}</span>
+                {t(label)}
+                <span className="opacity-70">[{String(count).padStart(2, '0')}]</span>
               </button>
             );
           })}
@@ -67,21 +50,21 @@ export default function Projects() {
         <AnimatePresence mode="wait">
           <motion.div
             key={active}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.25 }}
+            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
             {visible.map((project, i) => (
               <motion.div
                 key={project.title.en}
                 className="h-full min-w-0"
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.06 * i }}
+                transition={{ duration: 0.4, delay: 0.05 * i }}
               >
-                <ProjectCard project={project} />
+                <ProjectCard project={project} code={`${codePrefix[active]}-${String(i + 1).padStart(2, '0')}`} />
               </motion.div>
             ))}
           </motion.div>
@@ -91,51 +74,58 @@ export default function Projects() {
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project, code }: { project: Project; code: string }) {
   const { t, ui } = useLanguage();
   const { tech, icon: Icon, image, github, demo } = project;
   const title = t(project.title);
-  const description = t(project.description);
   const meta = [project.role, project.company, project.period]
     .filter((v) => v !== undefined)
     .map(t)
     .join(' · ');
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/60 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5">
-      <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-surface-2">
-        {image ? (
-          <img
-            src={image}
-            alt={`${title} ${ui.projects.screenshot}`}
-            loading="lazy"
-            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="grid size-full place-items-center bg-[radial-gradient(circle_at_30%_20%,color-mix(in_oklab,var(--color-accent)_18%,transparent),transparent_60%)]">
-            <Icon
-              size={48}
-              strokeWidth={1.5}
-              className="text-accent/80 transition-transform duration-500 group-hover:scale-110"
-            />
-          </div>
-        )}
+    <article className="group relative flex h-full flex-col border border-line/50 bg-panel/70 transition-colors hover:bg-panel">
+      <Corners className="border-transparent group-hover:border-accent" />
+
+      {/* Drawing-number strip */}
+      <div className="flex items-stretch border-b border-line/50">
+        <span className="grid place-items-center border-r border-line/50 px-3 font-mono text-xs text-accent">
+          {code}
+        </span>
+        <span className="annot flex-1 px-3 py-2 text-[10px] leading-relaxed">{meta || '—'}</span>
+        <span className="grid place-items-center border-l border-line/50 px-3 text-muted group-hover:text-accent">
+          <Icon size={16} strokeWidth={1.5} />
+        </span>
       </div>
 
-      <div className="flex flex-1 flex-col p-6">
-        {meta && <p className="mb-2 font-mono text-xs text-accent">{meta}</p>}
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="text-lg font-semibold">{title}</h3>
-          <div className="flex shrink-0 items-center gap-1">
+      {image ? (
+        <img
+          src={image}
+          alt={`${title} ${ui.projects.screenshot}`}
+          loading="lazy"
+          className="aspect-[16/9] w-full border-b border-line/50 object-cover"
+        />
+      ) : (
+        <div aria-hidden className="hatch grid h-24 place-items-center border-b border-line/50">
+          <span className="grid size-14 place-items-center rounded-full border border-line/70 bg-bg text-fg/90">
+            <Icon size={24} strokeWidth={1.25} />
+          </span>
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="font-display text-xl leading-tight font-semibold tracking-wide uppercase">{title}</h3>
+          <div className="-mt-1 flex shrink-0 gap-1">
             {github && (
               <a
                 href={github}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${title} — ${ui.projects.sourceCode}`}
-                className="grid size-8 place-items-center rounded-md text-muted transition-colors hover:text-accent"
+                className="grid size-8 place-items-center border border-line/40 text-muted transition-colors hover:border-accent hover:text-accent"
               >
-                <Github size={18} />
+                <Github size={15} strokeWidth={1.5} />
               </a>
             )}
             {demo && (
@@ -144,18 +134,21 @@ function ProjectCard({ project }: { project: Project }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${title} — ${ui.projects.liveDemo}`}
-                className="grid size-8 place-items-center rounded-md text-muted transition-colors hover:text-accent"
+                className="grid size-8 place-items-center border border-line/40 text-muted transition-colors hover:border-accent hover:text-accent"
               >
-                <ArrowUpRight size={18} />
+                <ArrowUpRight size={15} strokeWidth={1.5} />
               </a>
             )}
           </div>
         </div>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{description}</p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {tech.map((t) => (
-            <Tag key={t}>{t}</Tag>
-          ))}
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{t(project.description)}</p>
+        <div className="mt-5 border-t border-dashed border-line/30 pt-4">
+          <span className="annot text-[10px]">{ui.projects.spec}</span>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {tech.map((item) => (
+              <Tag key={item}>{item}</Tag>
+            ))}
+          </div>
         </div>
       </div>
     </article>

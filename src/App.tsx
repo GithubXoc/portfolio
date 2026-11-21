@@ -1,5 +1,5 @@
 import { MotionConfig } from 'framer-motion';
-import Background from './components/layout/Background';
+import DrawingFrame from './components/layout/DrawingFrame';
 import Footer from './components/layout/Footer';
 import Navbar from './components/layout/Navbar';
 import About from './components/sections/About';
@@ -14,7 +14,7 @@ export default function App() {
     <LanguageProvider>
       {/* Respect the OS "reduce motion" setting for every framer-motion animation. */}
       <MotionConfig reducedMotion="user">
-        <Background />
+        <DrawingFrame />
         <Navbar />
         <main>
           <Hero />
